@@ -1,0 +1,296 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --primary: 187 100% 42%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 187 100% 42%;
+    --radius: 0.75rem;
+  }
+
+  .light {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+    --primary: 187 100% 42%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 20.2% 45%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 187 100% 42%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-hover:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow {
+  box-shadow: 0 0 40px rgba(96, 165, 250, 0.3);
+}
+
+.blurry-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-20px) translateX(10px); }
+  50% { transform: translateY(-10px) translateX(-10px); }
+  75% { transform: translateY(20px) translateX(5px); }
+}
+
+.canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.scroll-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.metric-card {
+  @apply glass rounded-2xl p-6 transition-all duration-300;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+}
+
+.light .glass {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.light .glass-hover:hover {
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.light .metric-card {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.light footer {
+  background: rgba(240, 240, 240, 0.9);
+}
+
+.light .text-gray-300,
+.light .text-gray-400 {
+  color: #4b5563;
+}
+
+.light .blurry-orb {
+  opacity: 0.3;
+}
+
+.light nav .glass {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.light .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.light .text-white,
+.light .text-gray-100,
+.light .text-gray-200 {
+  color: #1f2937;
+}
+
+.light .text-gray-300,
+.light .text-gray-400,
+.light .text-gray-500 {
+  color: #6b7280;
+}
+
+.light .text-foreground {
+  color: #111827;
+}
+
+.light .text-cyan-300,
+.light .text-cyan-400 {
+  color: #0891b2;
+}
+
+.light .text-blue-400 {
+  color: #2563eb;
+}
+
+.light .text-purple-400 {
+  color: #7c3aed;
+}
+
+.light .text-green-400 {
+  color: #16a34a;
+}
+
+.light .hover\:text-cyan-400:hover {
+  color: #0891b2;
+}
+
+.light .bg-gradient-to-r {
+  background: linear-gradient(to right, #0891b2, #2563eb);
+}
+
+.light footer.glass {
+  background: rgba(240, 240, 240, 0.95);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.light section:not(.light section) .text-gray-300 {
+  color: #4b5563;
+}
+
+.light input,
+.light textarea,
+.light select {
+  color: #111827;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #9ca3af;
+}
+
+.light .metric-card {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.light .metric-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.1);
+}
+
+.light .text-cyan-500\/20,
+.light .text-blue-500\/20,
+.light .text-purple-500\/20 {
+  background-color: transparent;
+}
+
+.light .bg-cyan-500\/20 {
+  background-color: rgba(6, 182, 212, 0.15);
+}
+
+.light .bg-blue-500\/20 {
+  background-color: rgba(37, 99, 235, 0.15);
+}
+
+.light .bg-purple-500\/20 {
+  background-color: rgba(124, 58, 237, 0.15);
+}
+
+.light .bg-green-500\/20 {
+  background-color: rgba(34, 197, 94, 0.15);
+}
+
+.light footer {
+  background: rgba(249, 250, 251, 0.95);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.light footer h4 {
+  color: #111827;
+}
+
+.light footer .text-white {
+  color: #111827;
+}
+
+.light .text-gradient {
+  background: linear-gradient(135deg, #0891b2, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.light .bg-gradient-to-r.from-cyan-400.to-blue-500,
+.light .text-gradient.bg-gradient-to-r.from-cyan-400.to-blue-500 {
+  background: linear-gradient(to right, #0891b2, #2563eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.light .bg-gradient-to-r.from-blue-500.to-purple-500,
+.light .text-gradient.bg-gradient-to-r.from-blue-500.to-purple-500 {
+  background: linear-gradient(to right, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.light .bg-gradient-to-r.from-purple-500.to-pink-500,
+.light .text-gradient.bg-gradient-to-r.from-purple-500.to-pink-500 {
+  background: linear-gradient(to right, #7c3aed, #db2777);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.light .bg-gradient-to-r.from-cyan-400.via-blue-500.to-purple-600,
+.light .text-gradient.bg-gradient-to-r.from-cyan-400.via-blue-500.to-purple-600 {
+  background: linear-gradient(to right, #0891b2, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
