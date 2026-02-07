@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import ThreeBackground from '@/components/ThreeBackground'
 import Hero from '@/components/Hero'
@@ -6,8 +6,8 @@ import Plans from '@/components/Plans'
 import Features from '@/components/Features'
 import Testimonials from '@/components/Testimonials'
 import Location from '@/components/Location'
-import CTA from '@/components/CTA'
 import Footer from '@/components/Footer'
+import RegistrationForm from '@/components/RegistrationForm'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/lib/ThemeContext'
 import { useSettings } from '@/hooks/useSettings'
@@ -68,6 +68,25 @@ function NavBar({ siteTitle }: { siteTitle: string }) {
 export default function Home() {
     const [loading, setLoading] = useState(true)
     const { settings } = useSettings()
+    const [packages, setPackages] = useState<any[]>([])
+    const [selectedPackage, setSelectedPackage] = useState<string>('')
+
+    useEffect(() => {
+        fetch('http://localhost:9000/api/packages')
+            .then(res => res.json())
+            .then(data => setPackages(data))
+            .catch(err => console.error(err));
+    }, []);
+
+    const handleSelectPackage = (packageName: string) => {
+        setSelectedPackage(packageName);
+        setTimeout(() => {
+            const element = document.getElementById('registration');
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    };
 
     setTimeout(() => setLoading(false), 1500)
 
@@ -100,18 +119,23 @@ export default function Home() {
 
             <main>
                 <Hero settings={settings} />
-                <Features settings={settings} />
-                <Plans />
+                <Features />
+                <Plans onSelectPackage={handleSelectPackage} />
+                <RegistrationForm 
+                    packages={packages} 
+                    selectedPackage={selectedPackage}
+                    whatsappNumber={settings?.whatsapp_number}
+                    siteName={settings?.site_title}
+                />
                 <Testimonials settings={settings} />
                 <Location settings={settings} />
-                <CTA settings={settings} />
             </main>
 
             <Footer settings={settings} />
 
             {/* Floating WhatsApp Button */}
             <motion.a
-                href="https://wa.me/6285233053443?text=Halo%20UNNET,%20saya%20ingin%20tanya%20tentang%20paket%20internet"
+                href={`https://wa.me/${settings?.whatsapp_number}?text=Halo%20${settings?.site_title},%20saya%20ingin%20tanya%20tentang%20paket%20internet`}
                 target="_blank"
                 rel="noopener noreferrer"
                 initial={{ scale: 0 }}

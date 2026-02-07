@@ -11,7 +11,11 @@ interface Package {
   features: string[];
 }
 
-export default function Plans() {
+interface PlansProps {
+  onSelectPackage?: (packageName: string) => void;
+}
+
+export default function Plans({ onSelectPackage }: PlansProps) {
   const [plans, setPlans] = useState<Package[]>([])
 
   useEffect(() => {
@@ -75,7 +79,7 @@ export default function Plans() {
               <Button
                 className="w-full rounded-xl text-sm md:text-base"
                 variant="outline"
-                onClick={() => document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => onSelectPackage?.(plan.name)}
               >
                 Pilih Paket
               </Button>

@@ -38,6 +38,19 @@ pub fn init_db() -> Result<Connection> {
         [],
     )?;
 
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS registrations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            address TEXT NOT NULL,
+            package TEXT NOT NULL,
+            notes TEXT,
+            created_at TEXT NOT NULL
+        )",
+        [],
+    )?;
+
     // Seed default settings using INSERT OR IGNORE to add missing keys without overwriting existing ones
     let default_settings = vec![
         ("site_title", "UNNET"),

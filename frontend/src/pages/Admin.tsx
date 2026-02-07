@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, Trash2, Plus, Save, Moon, Sun, Settings, Package, MapPin, FileText, LogOut, RefreshCw } from 'lucide-react';
+import { Loader2, Trash2, Plus, Save, Moon, Sun, Settings, Package, MapPin, FileText, LogOut, RefreshCw, CheckCircle } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface Setting {
     key: string;
@@ -19,8 +20,13 @@ interface Package {
 export default function Admin() {
     const { theme, toggleTheme } = useTheme();
     const [password, setPassword] = useState('');
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(() => {
+        return localStorage.getItem('admin_authenticated') === 'true';
+    });
     const [loading, setLoading] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [savingKey, setSavingKey] = useState<string | null>(null);
 
     // Data States
     const [settings, setSettings] = useState<Record<string, string>>({});
@@ -64,12 +70,14 @@ export default function Admin() {
         e.preventDefault();
         if (password === 'admin123') {
             setIsAuthenticated(true);
+            localStorage.setItem('admin_authenticated', 'true');
         } else {
             alert('Password salah!');
         }
     };
 
     const handleUpdateSetting = async (key: string, value: string) => {
+        setSavingKey(key);
         try {
             await fetch(`${API_URL}/settings`, {
                 method: 'POST',
@@ -77,14 +85,19 @@ export default function Admin() {
                 body: JSON.stringify({ key, value }),
             });
             setSettings(prev => ({ ...prev, [key]: value }));
-            alert(`Setting ${key} berhasil disimpan!`);
+            setSuccessMessage("Pengaturan berhasil disimpan!");
+            setShowSuccessModal(true);
+            setTimeout(() => setShowSuccessModal(false), 2000);
         } catch (error) {
             console.error(error);
             alert("Gagal menyimpan setting.");
+        } finally {
+            setSavingKey(null);
         }
     };
 
     const handleAddPackage = async () => {
+        setSavingKey('add_package');
         try {
             const pkg = { ...newPackage, features: featuresInput.split(',').map(s => s.trim()).filter(s => s) };
             await fetch(`${API_URL}/packages`, {
@@ -95,10 +108,14 @@ export default function Admin() {
             setNewPackage({ name: '', speed: '', price: '', features: [] });
             setFeaturesInput('');
             fetchData(); // Refresh list
-            alert("Paket berhasil ditambah!");
+            setSuccessMessage("Paket berhasil ditambahkan!");
+            setShowSuccessModal(true);
+            setTimeout(() => setShowSuccessModal(false), 2000);
         } catch (error) {
             console.error(error);
             alert("Gagal menambah paket.");
+        } finally {
+            setSavingKey(null);
         }
     };
 
@@ -126,7 +143,6 @@ export default function Admin() {
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full px-4 py-3 rounded-lg bg-background border focus:outline-none focus:border-cyan-500 transition-colors"
                         />
-                        <p className="text-xs text-muted-foreground mt-2">Default: admin123</p>
                     </div>
                     <Button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 rounded-lg transition-colors">Login</Button>
                 </form>
@@ -155,7 +171,10 @@ export default function Admin() {
                             {loading ? <Loader2 className="animate-spin w-4 h-4" /> : <RefreshCw className="w-4 h-4" />}
                             Refresh
                         </Button>
-                        <Button variant="destructive" onClick={() => setIsAuthenticated(false)} className="gap-2">
+                        <Button variant="destructive" onClick={() => {
+                            setIsAuthenticated(false);
+                            localStorage.removeItem('admin_authenticated');
+                        }} className="gap-2">
                             <LogOut className="w-4 h-4" /> Logout
                         </Button>
                     </div>
@@ -182,8 +201,8 @@ export default function Admin() {
                                             value={settings['site_title'] || ''}
                                             onChange={(e) => setSettings(prev => ({ ...prev, 'site_title': e.target.value }))}
                                         />
-                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('site_title', settings['site_title'])}>
-                                            <Save size={16} />
+                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('site_title', settings['site_title'])} disabled={savingKey === 'site_title'}>
+                                            {savingKey === 'site_title' ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                         </Button>
                                     </div>
                                 </div>
@@ -196,8 +215,8 @@ export default function Admin() {
                                             value={settings['whatsapp_number'] || ''}
                                             onChange={(e) => setSettings(prev => ({ ...prev, 'whatsapp_number': e.target.value }))}
                                         />
-                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('whatsapp_number', settings['whatsapp_number'])}>
-                                            <Save size={16} />
+                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('whatsapp_number', settings['whatsapp_number'])} disabled={savingKey === 'whatsapp_number'}>
+                                            {savingKey === 'whatsapp_number' ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                         </Button>
                                     </div>
                                 </div>
@@ -210,8 +229,8 @@ export default function Admin() {
                                             value={settings['email'] || ''}
                                             onChange={(e) => setSettings(prev => ({ ...prev, 'email': e.target.value }))}
                                         />
-                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('email', settings['email'])}>
-                                            <Save size={16} />
+                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('email', settings['email'])} disabled={savingKey === 'email'}>
+                                            {savingKey === 'email' ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                         </Button>
                                     </div>
                                 </div>
@@ -224,8 +243,8 @@ export default function Admin() {
                                             value={settings['tagline'] || ''}
                                             onChange={(e) => setSettings(prev => ({ ...prev, 'tagline': e.target.value }))}
                                         />
-                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('tagline', settings['tagline'])}>
-                                            <Save size={16} />
+                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('tagline', settings['tagline'])} disabled={savingKey === 'tagline'}>
+                                            {savingKey === 'tagline' ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                         </Button>
                                     </div>
                                 </div>
@@ -238,8 +257,8 @@ export default function Admin() {
                                             value={settings['work_hours'] || ''}
                                             onChange={(e) => setSettings(prev => ({ ...prev, 'work_hours': e.target.value }))}
                                         />
-                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('work_hours', settings['work_hours'])}>
-                                            <Save size={16} />
+                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('work_hours', settings['work_hours'])} disabled={savingKey === 'work_hours'}>
+                                            {savingKey === 'work_hours' ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                         </Button>
                                     </div>
                                 </div>
@@ -252,8 +271,8 @@ export default function Admin() {
                                             value={settings['address'] || ''}
                                             onChange={(e) => setSettings(prev => ({ ...prev, 'address': e.target.value }))}
                                         />
-                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('address', settings['address'])}>
-                                            <Save size={16} />
+                                        <Button size="icon" variant="ghost" onClick={() => handleUpdateSetting('address', settings['address'])} disabled={savingKey === 'address'}>
+                                            {savingKey === 'address' ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                         </Button>
                                     </div>
                                 </div>
@@ -306,8 +325,9 @@ export default function Admin() {
                                                 handleUpdateSetting('map_embed_url', settings['map_embed_url']);
                                                 handleUpdateSetting('map_direct_url', settings['map_direct_url']);
                                             }}
+                                            disabled={savingKey === 'map_embed_url' || savingKey === 'map_direct_url'}
                                         >
-                                            <Save size={16} />
+                                            {(savingKey === 'map_embed_url' || savingKey === 'map_direct_url') ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                                         </Button>
                                     </div>
 
@@ -368,8 +388,9 @@ export default function Admin() {
                                     value={featuresInput}
                                     onChange={e => setFeaturesInput(e.target.value)}
                                 />
-                                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" onClick={handleAddPackage}>
-                                    <Plus className="mr-2 h-4 w-4" /> Tambah
+                                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white" onClick={handleAddPackage} disabled={savingKey === 'add_package'}>
+                                    {savingKey === 'add_package' ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}
+                                    {savingKey === 'add_package' ? 'Menambahkan...' : 'Tambah'}
                                 </Button>
                             </div>
                         </div>
@@ -409,6 +430,23 @@ export default function Admin() {
                     </div>
                 </div>
             </div>
+
+            {/* Success Modal */}
+            <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <div className="flex items-center justify-center mb-4">
+                            <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center animate-scale-in">
+                                <CheckCircle className="w-8 h-8 text-green-500 animate-check" />
+                            </div>
+                        </div>
+                        <DialogTitle className="text-center">Berhasil!</DialogTitle>
+                        <DialogDescription className="text-center">
+                            {successMessage}
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
