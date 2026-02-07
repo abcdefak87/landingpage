@@ -161,7 +161,7 @@ async fn main() -> std::io::Result<()> {
             .route("/api/registrations", web::post().to(save_registration))
             .route("/api/registrations", web::get().to(get_registrations))
     })
-    .bind("127.0.0.1:9000")?
+    .bind("0.0.0.0:9000")?
     .run()
     .await
 }

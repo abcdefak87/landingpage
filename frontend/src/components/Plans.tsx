@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Check, Wifi } from 'lucide-react'
+import { API_URL } from '@/config'
 
 interface Package {
   id: number;
@@ -19,7 +20,7 @@ export default function Plans({ onSelectPackage }: PlansProps) {
   const [plans, setPlans] = useState<Package[]>([])
 
   useEffect(() => {
-    fetch('http://localhost:9000/api/packages')
+    fetch(`${API_URL}/packages`)
       .then(res => res.json())
       .then(data => setPlans(data))
       .catch(err => console.error("Failed to fetch packages", err))

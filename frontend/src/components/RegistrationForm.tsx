@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, CheckCircle, User, Phone, MapPin, Package as PackageIcon } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { API_URL } from '@/config';
 
 interface Package {
     id?: number;
@@ -41,7 +42,7 @@ export default function RegistrationForm({ packages, selectedPackage, whatsappNu
 
         try {
             // Save to database
-            await fetch('http://localhost:9000/api/registrations', {
+            await fetch(`${API_URL}/registrations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

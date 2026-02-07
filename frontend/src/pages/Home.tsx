@@ -8,6 +8,7 @@ import Testimonials from '@/components/Testimonials'
 import Location from '@/components/Location'
 import Footer from '@/components/Footer'
 import RegistrationForm from '@/components/RegistrationForm'
+import { API_URL } from '@/config'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/lib/ThemeContext'
 import { useSettings } from '@/hooks/useSettings'
@@ -55,7 +56,7 @@ function NavBar({ siteTitle }: { siteTitle: string }) {
                     <Button
                         size="sm"
                         className="rounded-full bg-cyan-500 hover:bg-cyan-600"
-                        onClick={() => document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={() => document.getElementById('registration')?.scrollIntoView({ behavior: 'smooth' })}
                     >
                         Daftar Sekarang
                     </Button>
@@ -72,7 +73,7 @@ export default function Home() {
     const [selectedPackage, setSelectedPackage] = useState<string>('')
 
     useEffect(() => {
-        fetch('http://localhost:9000/api/packages')
+        fetch(`${API_URL}/packages`)
             .then(res => res.json())
             .then(data => setPackages(data))
             .catch(err => console.error(err));

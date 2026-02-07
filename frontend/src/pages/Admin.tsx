@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Trash2, Plus, Save, Moon, Sun, Settings, Package, MapPin, FileText, LogOut, RefreshCw, CheckCircle, Lock, AlertTriangle, Clock, XCircle } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { API_URL } from '@/config';
 
 interface Setting {
     key: string;
@@ -47,8 +48,6 @@ export default function Admin() {
     // Form States
     const [newPackage, setNewPackage] = useState<Package>({ name: '', speed: '', price: '', features: [] });
     const [featuresInput, setFeaturesInput] = useState('');
-
-    const API_URL = 'http://localhost:9000/api';
 
     useEffect(() => {
         if (isAuthenticated) {

@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Send, CheckCircle, Loader2, MapPin, Phone, Mail } from 'lucide-react'
+import { API_URL } from '@/config'
 
 interface Package {
   id: number;
@@ -17,7 +18,7 @@ export default function CTA({ settings }: { settings: any }) {
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   useEffect(() => {
-    fetch('http://localhost:9000/api/packages')
+    fetch(`${API_URL}/packages`)
       .then(res => res.json())
       .then(data => {
         setPackages(data)
@@ -31,7 +32,7 @@ export default function CTA({ settings }: { settings: any }) {
     setIsSubmitting(true)
 
     try {
-      await fetch('http://localhost:9000/api/contact', {
+      await fetch(`${API_URL}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

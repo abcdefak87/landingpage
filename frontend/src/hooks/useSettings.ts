@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '@/config';
 
 interface Settings {
     site_title: string;
@@ -25,7 +26,7 @@ export function useSettings() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:9000/api/settings')
+        fetch(`${API_URL}/settings`)
             .then(res => res.json())
             .then(data => {
                 const newSettings: any = {};
