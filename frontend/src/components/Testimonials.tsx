@@ -1,52 +1,52 @@
 import { motion } from 'framer-motion'
 import { Star, Quote } from 'lucide-react'
 
-const testimonials = [
-  {
-    name: 'Pak Budi',
-    role: 'Pemilik Warnet',
-    rating: 5,
-    text: 'Teknisi UNNET sangat cepat tanggap! Pas ada masalah langsung datang. Internet stabil untuk warnet, pelanggan puas.',
-    avatar: '👨‍💼',
-  },
-  {
-    name: 'Bu Siti',
-    role: 'Ibu Rumah Tangga',
-    rating: 5,
-    text: 'Harga terjangkau, internet cepat. Anak-anak bisa sekolah online lancar. Teknisinya ramah dan profesional.',
-    avatar: '👩',
-  },
-  {
-    name: 'Mas Ahmad',
-    role: 'Freelancer',
-    rating: 5,
-    text: 'Paling cocok buat kerja dari rumah. Koneksi stabil, jarang putus. Teknisi cepat datang kalau ada kendala.',
-    avatar: '👨‍💻',
-  },
-  {
-    name: 'Mbak Dewi',
-    role: 'Pemilik Cafe',
-    rating: 5,
-    text: 'WiFi untuk cafe lancar jaya. Pelanggan senang, bisnis makin ramai. Pelayanan UNNET top!',
-    avatar: '👩‍🍳',
-  },
-  {
-    name: 'Mas Rudi',
-    role: 'Gamer',
-    rating: 5,
-    text: 'Ping rendah, cocok banget buat main game online. Teknisi juga ngerti kebutuhan gamer. Mantap!',
-    avatar: '🎮',
-  },
-  {
-    name: 'Kak Linda',
-    role: 'Content Creator',
-    rating: 5,
-    text: 'Upload video cepat, streaming lancar tanpa buffering. Teknisi responsif, masalah cepat selesai.',
-    avatar: '📹',
-  },
-]
+export default function Testimonials({ settings }: { settings: any }) {
+  const testimonials = [
+    {
+      name: 'Pak Budi',
+      role: 'Pemilik Warnet',
+      rating: 5,
+      text: `Teknisi ${settings?.site_title || 'UNNET'} sangat cepat tanggap! Pas ada masalah langsung datang. Internet stabil untuk warnet, pelanggan puas.`,
+      avatar: '👨‍💼',
+    },
+    {
+      name: 'Bu Siti',
+      role: 'Ibu Rumah Tangga',
+      rating: 5,
+      text: 'Harga terjangkau, internet cepat. Anak-anak bisa sekolah online lancar. Teknisinya ramah dan profesional.',
+      avatar: '👩',
+    },
+    {
+      name: 'Mas Ahmad',
+      role: 'Freelancer',
+      rating: 5,
+      text: 'Paling cocok buat kerja dari rumah. Koneksi stabil, jarang putus. Teknisi cepat datang kalau ada kendala.',
+      avatar: '👨‍💻',
+    },
+    {
+      name: 'Mbak Dewi',
+      role: 'Pemilik Cafe',
+      rating: 5,
+      text: `WiFi untuk cafe lancar jaya. Pelanggan senang, bisnis makin ramai. Pelayanan ${settings?.site_title || 'UNNET'} top!`,
+      avatar: '👩‍🍳',
+    },
+    {
+      name: 'Mas Rudi',
+      role: 'Gamer',
+      rating: 5,
+      text: 'Ping rendah, cocok banget buat main game online. Teknisi juga ngerti kebutuhan gamer. Mantap!',
+      avatar: '🎮',
+    },
+    {
+      name: 'Kak Linda',
+      role: 'Content Creator',
+      rating: 5,
+      text: 'Upload video cepat, streaming lancar tanpa buffering. Teknisi responsif, masalah cepat selesai.',
+      avatar: '📹',
+    },
+  ]
 
-export default function Testimonials() {
   return (
     <section className="scroll-section px-6 md:px-12 lg:px-20 py-20">
       <div className="max-w-6xl mx-auto">
@@ -61,7 +61,7 @@ export default function Testimonials() {
             Apa Kata <span className="text-gradient bg-gradient-to-r from-cyan-400 to-blue-500">Pelanggan</span>
           </h2>
           <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto px-4">
-            Pelanggan di Jawa Timur puas dengan layanan UNNET. Teknisi cepat tanggap dan profesional.
+            Pelanggan di Jawa Timur puas dengan layanan {settings?.site_title || 'UNNET'}. Teknisi cepat tanggap dan profesional.
           </p>
           <div className="w-24 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full mx-auto mt-8" />
         </motion.div>
@@ -77,7 +77,7 @@ export default function Testimonials() {
               className="metric-card group relative"
             >
               <Quote className="absolute top-3 right-3 md:top-4 md:right-4 text-cyan-500/20 group-hover:text-cyan-500/40 transition-colors" size={32} />
-              
+
               <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
                 <div className="text-3xl md:text-4xl">{testimonial.avatar}</div>
                 <div>

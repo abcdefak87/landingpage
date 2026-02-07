@@ -2,38 +2,23 @@ import { motion } from 'framer-motion'
 
 const features = [
   {
-    icon: 'speed',
-    title: 'Kecepatan Tinggi',
-    description: 'Internet up to 1 Gbps dengan latensi rendah untuk streaming, gaming, dan video call tanpa gangguan.',
+    icon: 'rocket_launch',
+    title: 'Super Cepat & Stabil',
+    description: 'Nikmati streaming 4K, gaming tanpa lag, dan video call lancar dengan koneksi prioritas bandwidth tinggi.',
   },
   {
-    icon: 'router',
-    title: 'Fiber Optic',
-    description: 'Jaringan fiber optik terkini yang menjamin koneksi stabil dan cepat 24/7.',
+    icon: 'all_inclusive',
+    title: 'True Unlimited',
+    description: 'Bebas internetan sepuasnya tanpa batasan kuota (FUP). Download dan upload file besar tanpa khawatir kecepatan turun.',
   },
   {
     icon: 'support_agent',
-    title: 'Support 24/7',
-    description: 'Tim dukungan teknis profesional siap membantu Anda kapan saja tanpa biaya tambahan.',
-  },
-  {
-    icon: 'wifi',
-    title: 'Free Router',
-    description: 'Router WiFi gratis dengan instalasi profesional untuk cobertura optimal di seluruh rumah.',
-  },
-  {
-    icon: 'security',
-    title: 'Keamanan Terjamin',
-    description: 'Proteksi dari ancaman cyber dan malware dengan sistem keamanan terintegrasi.',
-  },
-  {
-    icon: 'event_available',
-    title: 'Tanpa Kontrak',
-    description: 'Fleksibilitas penuh tanpa kontrak jangka panjang. Bebas upgrade/downgrade kapan saja.',
+    title: 'Support Responsif',
+    description: 'Bukan sekadar bot. Tim teknis profesional kami siap membantu kendala Anda 24 jam sehari dengan solusi cepat.',
   },
 ]
 
-export default function Features() {
+export default function Features({ settings }: { settings: any }) {
   return (
     <section id="features" className="scroll-section px-6 md:px-12 lg:px-20 py-20">
       <div className="max-w-6xl mx-auto">
@@ -45,7 +30,7 @@ export default function Features() {
           className="text-center mb-16"
         >
           <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Mengapa <span className="text-gradient bg-gradient-to-r from-cyan-400 to-blue-500">UNNET</span>?
+            Mengapa <span className="text-gradient bg-gradient-to-r from-cyan-400 to-blue-500">{settings?.site_title || 'UNNET'}</span>?
           </h2>
           <p className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto px-4">
             Kami memberikan pengalaman internet terbaik dengan teknologi tercanggih dan layanan profesional.

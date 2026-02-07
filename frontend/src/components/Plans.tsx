@@ -1,43 +1,26 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Check, Wifi } from 'lucide-react'
 
-const plans = [
-  {
-    name: 'Starter',
-    price: 'Rp 150rb',
-    period: '/bulan',
-    speed: '30 Mbps',
-    features: ['Unlimited Kuota', 'Fixed IP', 'Support 24/7', 'Free Router WiFi'],
-    popular: false,
-  },
-  {
-    name: 'Standard',
-    price: 'Rp 250rb',
-    period: '/bulan',
-    speed: '100 Mbps',
-    features: ['Unlimited Kuota', 'Fixed IP', 'Priority Support', 'Free Router WiFi', 'Static IP'],
-    popular: true,
-  },
-  {
-    name: 'Premium',
-    price: 'Rp 450rb',
-    period: '/bulan',
-    speed: '300 Mbps',
-    features: ['Unlimited Kuota', 'Dedicated IP', 'VIP Support', 'Free Router WiFi', 'Free Installation'],
-    popular: false,
-  },
-  {
-    name: 'Business',
-    price: 'Rp 850rb',
-    period: '/bulan',
-    speed: '1 Gbps',
-    features: ['Unlimited Kuota', 'Dedicated Line', '24/7 On-site Support', 'Enterprise Router', 'SLA 99.99%'],
-    popular: false,
-  },
-]
+interface Package {
+  id: number;
+  name: string;
+  speed: string;
+  price: string;
+  features: string[];
+}
 
 export default function Plans() {
+  const [plans, setPlans] = useState<Package[]>([])
+
+  useEffect(() => {
+    fetch('http://localhost:9000/api/packages')
+      .then(res => res.json())
+      .then(data => setPlans(data))
+      .catch(err => console.error("Failed to fetch packages", err))
+  }, [])
+
   return (
     <section id="plans" className="scroll-section px-6 md:px-12 lg:px-20 py-20">
       <div className="max-w-6xl mx-auto">
@@ -60,32 +43,19 @@ export default function Plans() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {plans.map((plan, index) => (
             <motion.div
-              key={plan.name}
+              key={plan.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className={`relative rounded-2xl p-5 md:p-6 glass transition-all duration-300 ${
-                plan.popular ? 'border-2 border-cyan-500 shadow-lg shadow-cyan-500/20' : 'hover:border-cyan-500/50'
-              }`}
+              className={`relative rounded-2xl p-5 md:p-6 glass transition-all duration-300 hover:border-cyan-500/50`}
             >
-              {plan.popular && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full text-xs md:text-sm font-semibold whitespace-nowrap"
-                >
-                  Paling Populer
-                </motion.div>
-              )}
-
               <div className="text-center mb-4 md:mb-6">
                 <h3 className="text-lg md:text-xl font-semibold mb-2">{plan.name}</h3>
                 <div className="flex items-baseline justify-center gap-1">
                   <span className="text-3xl md:text-4xl font-bold text-gradient bg-gradient-to-r from-cyan-400 to-blue-500">
                     {plan.price}
                   </span>
-                  <span className="text-sm md:text-base text-gray-400">{plan.period}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2 mt-3 md:mt-4 text-cyan-400">
                   <Wifi size={18} className="md:w-5 md:h-5" />
@@ -94,8 +64,8 @@ export default function Plans() {
               </div>
 
               <ul className="space-y-2 md:space-y-3 mb-4 md:mb-6">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2 text-xs md:text-sm">
+                {plan.features.map((feature, i) => (
+                  <li key={i} className="flex items-center gap-2 text-xs md:text-sm">
                     <Check size={14} className="text-green-400 flex-shrink-0 md:w-4 md:h-4" />
                     <span className="text-gray-300">{feature}</span>
                   </li>
@@ -103,12 +73,8 @@ export default function Plans() {
               </ul>
 
               <Button
-                className={`w-full rounded-xl text-sm md:text-base ${
-                  plan.popular
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700'
-                    : ''
-                }`}
-                variant={plan.popular ? 'default' : 'outline'}
+                className="w-full rounded-xl text-sm md:text-base"
+                variant="outline"
                 onClick={() => document.getElementById('cta')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Pilih Paket

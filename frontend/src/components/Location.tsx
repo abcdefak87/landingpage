@@ -2,9 +2,10 @@ import { motion } from 'framer-motion'
 import { MapPin, Phone, Clock, Navigation } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export default function Location() {
+export default function Location({ settings }: { settings: any }) {
   const openGoogleMaps = () => {
-    window.open('https://www.google.com/maps/place/UNNET+WIFI+cepat+tanggap+teknisinya/@-7.2648314,111.7600417,1078m/data=!3m1!1e3!4m8!3m7!1s0x2e79d5e75d766211:0x2c8b3ef233d2ef5a!8m2!3d-7.2648367!4d111.7626166!9m1!1b1!16s%2Fg%2F11smmhxn1f', '_blank')
+    const url = settings?.map_direct_url || 'https://www.google.com/maps';
+    window.open(url, '_blank')
   }
 
   return (
@@ -42,8 +43,8 @@ export default function Location() {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Alamat Kantor</h3>
                   <p className="text-gray-400 leading-relaxed">
-                    UNNET WIFI<br />
-                    Jawa Timur, Indonesia<br />
+                    {settings?.site_title || 'UNNET'} WIFI<br />
+                    {settings?.address || 'Jawa Timur, Indonesia'}<br />
                     <span className="text-xs text-gray-500">Koordinat: -7.2648367, 111.7626166</span>
                   </p>
                 </div>
@@ -58,9 +59,9 @@ export default function Location() {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Hubungi Kami</h3>
                   <p className="text-gray-400">
-                    WhatsApp: <a href="https://wa.me/6285233053443" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300">0852-3305-3443</a><br />
-                  Email: <span className="text-cyan-400">info@unnet.id</span><br />
-                  <span className="text-sm">Teknisi Cepat Tanggap</span>
+                    WhatsApp: <a href={`https://wa.me/${settings?.whatsapp_number}`} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300">{settings?.whatsapp_number}</a><br />
+                    Email: <span className="text-cyan-400">{settings?.email || 'info@unnet.id'}</span><br />
+                    <span className="text-sm">{settings?.tagline || 'Teknisi Cepat Tanggap'}</span>
                   </p>
                 </div>
               </div>
@@ -74,8 +75,7 @@ export default function Location() {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Jam Operasional</h3>
                   <p className="text-gray-400">
-                    Senin - Sabtu: 08:00 - 20:00<br />
-                    Minggu: 09:00 - 17:00<br />
+                    {settings?.work_hours || 'Senin - Sabtu: 08:00 - 20:00'}<br />
                     <span className="text-cyan-400">Teknisi Siap Sedia</span><br />
                     <span className="text-sm">Layanan Cepat & Responsif</span>
                   </p>
@@ -93,7 +93,7 @@ export default function Location() {
             </Button>
 
             <a
-              href="https://wa.me/6285233053443?text=Halo%20UNNET,%20saya%20ingin%20tanya%20tentang%20paket%20internet"
+              href={`https://wa.me/${settings?.whatsapp_number}?text=Halo%20${settings?.site_title},%20saya%20ingin%20tanya%20tentang%20paket%20internet`}
               target="_blank"
               rel="noopener noreferrer"
               className="block"
@@ -118,14 +118,14 @@ export default function Location() {
           >
             <div className="metric-card overflow-hidden h-full min-h-[400px] md:min-h-[500px]">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.8!2d111.7626166!3d-7.2648367!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e79d5e75d766211%3A0x2c8b3ef233d2ef5a!2sUNNET%20WIFI%20cepat%20tanggap%20teknisinya!5e0!3m2!1sen!2sid!4v1234567890"
+                src={settings?.map_embed_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.8!2d111.7626166!3d-7.2648367!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e79d5e75d766211%3A0x2c8b3ef233d2ef5a!2sUNNET%20WIFI%20cepat%20tanggap%20teknisinya!5e0!3m2!1sen!2sid!4v1234567890"}
                 width="100%"
                 height="100%"
                 style={{ border: 0, borderRadius: '1rem' }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="UNNET Location"
+                title={`${settings?.site_title || 'UNNET'} Location`}
               />
             </div>
           </motion.div>

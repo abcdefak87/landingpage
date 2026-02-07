@@ -1,26 +1,44 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Send, CheckCircle, Loader2, MapPin, Phone, Mail } from 'lucide-react'
 
-export default function CTA() {
-  const [formData, setFormData] = useState({ name: '', phone: '', address: '', package: 'starter' })
+interface Package {
+  id: number;
+  name: string;
+  speed: string;
+  price: string;
+}
+
+export default function CTA({ settings }: { settings: any }) {
+  const [formData, setFormData] = useState({ name: '', phone: '', address: '', package: '' })
+  const [packages, setPackages] = useState<Package[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+
+  useEffect(() => {
+    fetch('http://localhost:9000/api/packages')
+      .then(res => res.json())
+      .then(data => {
+        setPackages(data)
+        if (data.length > 0) setFormData(prev => ({ ...prev, package: data[0].name }))
+      })
+      .catch(err => console.error("Failed to fetch packages", err))
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
     try {
-      await fetch('/api/contact', {
+      await fetch('http://localhost:9000/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
 
       setIsSubmitted(true)
-      setFormData({ name: '', phone: '', address: '', package: 'starter' })
+      setFormData({ name: '', phone: '', address: '', package: packages[0]?.name || '' })
     } catch (error) {
       console.error('Error:', error)
     } finally {
@@ -52,7 +70,7 @@ export default function CTA() {
                 </div>
                 <div>
                   <div className="font-semibold">Area Layanan</div>
-                  <div className="text-gray-400 text-sm">Jawa Timur & Sekitarnya - Teknisi Cepat Tanggap</div>
+                  <div className="text-gray-400 text-sm">{settings?.address || 'Jawa Timur & Sekitarnya'} - Teknisi Cepat Tanggap</div>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -61,8 +79,8 @@ export default function CTA() {
                 </div>
                 <div>
                   <div className="font-semibold">WhatsApp</div>
-                  <a href="https://wa.me/6285233053443" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 text-sm">
-                    0852-3305-3443
+                  <a href={`https://wa.me/${settings?.whatsapp_number}`} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300 text-sm">
+                    {settings?.whatsapp_number}
                   </a>
                 </div>
               </div>
@@ -153,10 +171,11 @@ export default function CTA() {
                       onChange={(e) => setFormData({ ...formData, package: e.target.value })}
                       className="w-full px-3 md:px-4 py-2 md:py-3 rounded-xl glass focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300 text-sm md:text-base"
                     >
-                      <option value="starter">Starter - 30 Mbps (Rp 150rb/bulan)</option>
-                      <option value="standard">Standard - 100 Mbps (Rp 250rb/bulan)</option>
-                      <option value="premium">Premium - 300 Mbps (Rp 450rb/bulan)</option>
-                      <option value="business">Business - 1 Gbps (Rp 850rb/bulan)</option>
+                      {packages.map(pkg => (
+                        <option key={pkg.id} value={pkg.name} className="bg-background text-foreground">
+                          {pkg.name} - {pkg.speed} ({pkg.price})
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <Button

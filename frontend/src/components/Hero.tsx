@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 
-export default function Hero() {
+export default function Hero({ settings }: { settings: any }) {
   return (
     <section className="scroll-section px-6 md:px-12 lg:px-20 min-h-screen flex items-center pt-24 md:pt-0">
       <div className="max-w-6xl mx-auto w-full">
@@ -42,7 +42,7 @@ export default function Hero() {
               className="text-base md:text-lg text-gray-300 mb-8 leading-relaxed"
             >
               Rasakan kecepatan internet super cepat dengan harga terjangkau.
-              UNNET menghadirkan koneksi stabil untuk rumah dan bisnis Anda.
+              {settings?.site_title || 'UNNET'} menghadirkan koneksi stabil untuk rumah dan bisnis Anda.
             </motion.p>
 
             <motion.div
@@ -60,7 +60,7 @@ export default function Hero() {
                 <span className="ml-2 material-icons" style={{ fontSize: '18px' }}>arrow_forward</span>
               </Button>
               <a
-                href="https://wa.me/6285233053443?text=Halo%20UNNET,%20saya%20ingin%20tanya%20tentang%20paket%20internet"
+                href={`https://wa.me/${settings?.whatsapp_number}?text=Halo%20${settings?.site_title},%20saya%20ingin%20tanya%20tentang%20paket%20internet`}
                 target="_blank"
                 rel="noopener noreferrer"
               >

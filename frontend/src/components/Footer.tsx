@@ -1,6 +1,6 @@
 import { Wifi, Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react'
 
-export default function Footer() {
+export default function Footer({ settings }: { settings: any }) {
   const currentYear = new Date().getFullYear()
 
   const footerLinks = {
@@ -18,7 +18,7 @@ export default function Footer() {
             <div className="flex items-center gap-2 mb-6">
               <Wifi className="text-cyan-400" size={32} />
               <span className="font-display text-2xl font-bold text-white">
-                UN<span className="text-cyan-400">NET</span>
+                {settings?.site_title?.substring(0, 2) || 'UN'}<span className="text-cyan-400">{settings?.site_title?.substring(2) || 'NET'}</span>
               </span>
             </div>
             <p className="text-gray-400 mb-6 max-w-sm">
@@ -68,12 +68,12 @@ export default function Footer() {
             <ul className="space-y-3 text-gray-400">
               <li className="flex items-center gap-2">
                 <MapPin size={16} className="text-cyan-400" />
-                <span>Jawa Timur, Indonesia</span>
+                <span>{settings?.address || 'Jawa Timur, Indonesia'}</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} className="text-cyan-400" />
-                <a href="https://wa.me/6285233053443" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">
-                  0852-3305-3443
+                <a href={`https://wa.me/${settings?.whatsapp_number}`} target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">
+                  {settings?.whatsapp_number}
                 </a>
               </li>
               <li className="flex items-center gap-2">
@@ -89,7 +89,7 @@ export default function Footer() {
             <div>
               <h4 className="font-semibold mb-4">Area Layanan</h4>
               <p className="text-gray-400 text-sm">
-                Melayani wilayah Jawa Timur dan sekitarnya dengan teknisi yang cepat tanggap dan profesional.
+                Melayani wilayah {settings?.address} dan sekitarnya dengan teknisi yang cepat tanggap dan profesional.
                 Instalasi cepat dengan layanan terbaik.
               </p>
             </div>
@@ -107,7 +107,7 @@ export default function Footer() {
 
           <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">
-              © {currentYear} UNNET. Hak cipta dilindungi.
+              © {currentYear} {settings?.site_title || 'UNNET'}. Hak cipta dilindungi.
             </p>
             <p className="text-gray-400 text-sm">
               Dibuat dengan ❤️ menggunakan React, Rust & Three.js
