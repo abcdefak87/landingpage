@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, Trash2, Plus, Save, Moon, Sun, Settings, Package, MapPin, FileText, LogOut, RefreshCw, CheckCircle } from 'lucide-react';
+import { Loader2, Trash2, Plus, Save, Moon, Sun, Settings, Package, MapPin, FileText, LogOut, RefreshCw, CheckCircle, Lock, AlertTriangle, Clock, XCircle } from 'lucide-react';
 import { useTheme } from '@/lib/ThemeContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
@@ -27,6 +27,18 @@ export default function Admin() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [savingKey, setSavingKey] = useState<string | null>(null);
+    const [loginAttempts, setLoginAttempts] = useState(() => {
+        return parseInt(localStorage.getItem('login_attempts') || '0');
+    });
+    const [lockUntil, setLockUntil] = useState<number | null>(() => {
+        const locked = localStorage.getItem('lock_until');
+        return locked ? parseInt(locked) : null;
+    });
+    const [remainingTime, setRemainingTime] = useState(0);
+    const [shakeError, setShakeError] = useState(false);
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showLoginSuccess, setShowLoginSuccess] = useState(false);
 
     // Data States
     const [settings, setSettings] = useState<Record<string, string>>({});
@@ -43,6 +55,34 @@ export default function Admin() {
             fetchData();
         }
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        // Check if account is locked
+        if (lockUntil) {
+            const now = Date.now();
+            if (now < lockUntil) {
+                const interval = setInterval(() => {
+                    const remaining = Math.ceil((lockUntil - Date.now()) / 1000);
+                    if (remaining <= 0) {
+                        setLockUntil(null);
+                        setLoginAttempts(0);
+                        localStorage.removeItem('lock_until');
+                        localStorage.removeItem('login_attempts');
+                        clearInterval(interval);
+                    } else {
+                        setRemainingTime(remaining);
+                    }
+                }, 1000);
+                return () => clearInterval(interval);
+            } else {
+                // Lock expired
+                setLockUntil(null);
+                setLoginAttempts(0);
+                localStorage.removeItem('lock_until');
+                localStorage.removeItem('login_attempts');
+            }
+        }
+    }, [lockUntil]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -68,11 +108,46 @@ export default function Admin() {
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // Check if locked
+        if (lockUntil && Date.now() < lockUntil) {
+            const minutes = Math.ceil((lockUntil - Date.now()) / 60000);
+            setShakeError(true);
+            setTimeout(() => setShakeError(false), 500);
+            setErrorMessage(`Akun terkunci. Coba lagi dalam ${minutes} menit.`);
+            setShowErrorModal(true);
+            return;
+        }
+
         if (password === 'admin123') {
-            setIsAuthenticated(true);
-            localStorage.setItem('admin_authenticated', 'true');
+            setShowLoginSuccess(true);
+            setTimeout(() => {
+                setIsAuthenticated(true);
+                localStorage.setItem('admin_authenticated', 'true');
+                // Reset attempts on successful login
+                setLoginAttempts(0);
+                localStorage.removeItem('login_attempts');
+                localStorage.removeItem('lock_until');
+                setShowLoginSuccess(false);
+            }, 1500);
         } else {
-            alert('Password salah!');
+            setShakeError(true);
+            setTimeout(() => setShakeError(false), 500);
+            
+            const newAttempts = loginAttempts + 1;
+            setLoginAttempts(newAttempts);
+            localStorage.setItem('login_attempts', newAttempts.toString());
+
+            if (newAttempts >= 3) {
+                // Lock for 5 minutes
+                const lockTime = Date.now() + (5 * 60 * 1000);
+                setLockUntil(lockTime);
+                localStorage.setItem('lock_until', lockTime.toString());
+                setErrorMessage('Terlalu banyak percobaan gagal! Akun terkunci selama 5 menit.');
+            } else {
+                setErrorMessage(`Password salah! Sisa percobaan: ${3 - newAttempts}`);
+            }
+            setShowErrorModal(true);
         }
     };
 
@@ -131,21 +206,105 @@ export default function Admin() {
     };
 
     if (!isAuthenticated) {
+        const isLocked = !!(lockUntil && Date.now() < lockUntil);
+        const minutes = isLocked ? Math.floor(remainingTime / 60) : 0;
+        const seconds = isLocked ? remainingTime % 60 : 0;
+
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">
-                <form onSubmit={handleLogin} className="bg-card p-8 rounded-xl max-w-sm w-full mx-4 border shadow-xl">
+                <form 
+                    onSubmit={handleLogin} 
+                    className={`bg-card p-8 rounded-xl max-w-sm w-full mx-4 border shadow-xl transition-all ${shakeError ? 'animate-shake' : ''}`}
+                >
                     <h2 className="text-2xl font-bold mb-6 text-center">Admin Login</h2>
+                    
+                    {isLocked && (
+                        <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                            <div className="flex items-center gap-2 justify-center mb-2">
+                                <Lock className="w-5 h-5 text-red-500" />
+                                <p className="text-red-500 text-sm font-semibold">
+                                    Akun Terkunci
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-2 justify-center">
+                                <Clock className="w-4 h-4 text-red-400" />
+                                <p className="text-red-400 text-xs">
+                                    Coba lagi dalam {minutes}:{seconds.toString().padStart(2, '0')}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {!isLocked && loginAttempts > 0 && (
+                        <div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                            <div className="flex items-center gap-2 justify-center">
+                                <AlertTriangle className="w-4 h-4 text-yellow-500" />
+                                <p className="text-yellow-500 text-xs">
+                                    Sisa percobaan: {3 - loginAttempts}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="mb-4">
                         <input
                             type="password"
                             placeholder="Masukkan password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-4 py-3 rounded-lg bg-background border focus:outline-none focus:border-cyan-500 transition-colors"
+                            disabled={isLocked}
+                            className="w-full px-4 py-3 rounded-lg bg-background border focus:outline-none focus:border-cyan-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                     </div>
-                    <Button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 rounded-lg transition-colors">Login</Button>
+                    <Button 
+                        type="submit" 
+                        disabled={isLocked}
+                        className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isLocked ? (
+                            <>
+                                <Lock className="w-4 h-4 mr-2" />
+                                Terkunci
+                            </>
+                        ) : (
+                            'Login'
+                        )}
+                    </Button>
                 </form>
+
+                {/* Error Modal */}
+                <Dialog open={showErrorModal} onOpenChange={setShowErrorModal}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <div className="flex items-center justify-center mb-4">
+                                <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center animate-scale-in">
+                                    <XCircle className="w-8 h-8 text-red-500 animate-check" />
+                                </div>
+                            </div>
+                            <DialogTitle className="text-center text-red-500">Login Gagal</DialogTitle>
+                            <DialogDescription className="text-center">
+                                {errorMessage}
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Success Modal */}
+                <Dialog open={showLoginSuccess} onOpenChange={setShowLoginSuccess}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <div className="flex items-center justify-center mb-4">
+                                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center animate-scale-in">
+                                    <CheckCircle className="w-8 h-8 text-green-500 animate-check" />
+                                </div>
+                            </div>
+                            <DialogTitle className="text-center text-green-500">Login Berhasil!</DialogTitle>
+                            <DialogDescription className="text-center">
+                                Selamat datang di Admin Dashboard
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
             </div>
         );
     }
