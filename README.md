@@ -112,7 +112,7 @@ docker run -d -p 80:80 --name baltun-frontend baltun-frontend
 
 ## 📞 Kontak
 
-- **WhatsApp**: 085233053443
+- **WhatsApp**: 082291921583
 - **Lokasi**: Jawa Timur
 - **Google Maps**: [Baltun.net WIFI](https://www.google.com/maps/place/UNNET+WIFI+cepat+tanggap+teknisinya/@-7.2648367,111.7626166)
 
